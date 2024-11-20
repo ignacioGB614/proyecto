@@ -387,6 +387,19 @@ public class GUI extends JFrame {
     //Oyente boton Consultar reserva
     private class OyenteBotonConsultar implements ActionListener{
         public void actionPerformed(ActionEvent e){
+            deshabilitarBotones();
+            botonConsultar.setVisible(false);
+            botonReservar.setVisible(false);
+            String doc = labelDni.getText();
+            int dni = Integer.parseInt("doc");
+                if (logica.obtenerVuelo().hayReservaConDni(dni) != null) {
+                    datosPanel.setVisible(true);
+                    datosPanel.setEnabled(false);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "No se encontró una reserva con el DNI ingresado", "Error", JOptionPane.ERROR_MESSAGE);
+                    InputDni.setText("");
+                }
 
             //Deshabilito los botones de asientos para que el usuario no pueda seleccionarlos
             //Deshabilito los botones Consultar y Reservar
@@ -444,8 +457,8 @@ public class GUI extends JFrame {
                 
             //sino
             else {
-                
-                labelDni.setText("");
+                InputDni.setText("");
+                JOptionPane.showMessageDialog(null, "Ya existe una reserva con el DNI ingresado.", "DNI ya usado", JOptionPane.ERROR_MESSAGE);
             }
                 //muestro mensaje al usuario
                 //limpio el jTextField de dni
@@ -539,14 +552,14 @@ public class GUI extends JFrame {
             int i = Integer.parseInt(arr[0]);
             int j = Integer.parseInt(arr[1]);          
             //Si el usuario ingreso todos los campos y seleccionó el asiento
-            if(nombre != " " && apellido != " " && ubicacion != " ") {
+            if(nombre != null && apellido != null && ubicacion != null) {
                 //realizo la reserva
                 labelCodTicket.setText(nombre.substring(0, 1)+apellido.substring(0, 1)+labelDni.getText());
                 String ticket = labelCodTicket.getText();
                 Reserva r = new Reserva(dni, nombre, apellido, ticket, ubicacion);
                 logica.obtenerVuelo().reservar(i, j, r);
                 //muestro un mensaje
-
+                JOptionPane.showMessageDialog(null, "¡Creaste la reserva con éxito! Código del ticket: "+ticket, "Reserva exitosa", JOptionPane.INFORMATION_MESSAGE);
                 //Reinicio a la pantalla principal
                 if(prevI >= 0 && prevJ >= 0)
                     botones[prevI][prevJ].setIcon(new ImageIcon("asiento.png"));
@@ -561,11 +574,11 @@ public class GUI extends JFrame {
                 deshabilitarBotones();
                 limpiarCamposDatos();
             }
-                
+            else{
+                JOptionPane.showMessageDialog(null, "Por favor, complete todos los datos de la reserva.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
             //sino le muestro un mensaje de error
                 //muestro un mensaje                     
         }
     }
 }
-
-
